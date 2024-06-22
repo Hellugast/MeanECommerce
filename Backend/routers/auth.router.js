@@ -15,12 +15,39 @@ router.post("/register", async (req, res) => {
         user.createdDate = new Date();
         user.isAdmin = false
 
-        await user.save();
-        const token = jwt.sign({}, secretKey, options)
-        let model = { token: token, user: user }
-        res.json(model)
+        const checkUserMail = await User.findOne({ email: user.email });
+        if (checkUserMail != null) {
+            res.status(403).json({ message: "Bu mail adresini kullanamazsınız" })
+        } else {
+            await user.save();
+            const token = jwt.sign({}, secretKey, options)
+            let model = { token: token, user: user }
+            res.json(model)
+        }
     } catch (error) {
         res.status(500).json({ message: error.message })
+    }
+})
+
+router.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        let user = await User.findOne({ email: email })
+        if (user == null) {
+            res.status(403).json({ message: "Giriş başarısız" })
+        }
+        else {
+            if (user.password != password) {
+                res.status(403).json({ message: "Giriş başarısız" })
+            } else {
+                const token = jwt.sign({}, secretKey, options)
+                let model = { token: token, user: user }
+                res.json(model)
+            }
+        }
+    } catch (error) {
+        res.status(500).json({ message: err.message })
     }
 })
 
