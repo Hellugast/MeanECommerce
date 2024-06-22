@@ -4,12 +4,13 @@ import { importProvidersFrom } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { provideHttpClient } from "@angular/common/http";
+import { routes } from "./app/router";
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(),
     importProvidersFrom(
-      BrowserModule, CommonModule, RouterModule.forRoot([])
+      BrowserModule, CommonModule, RouterModule.forRoot(routes)
     )
   ]
 })
